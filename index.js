@@ -569,7 +569,7 @@ app.get("/", (req, res) => {
   </section>
 
   <!-- About Founder Section -->
-  <section id="about" class="about-section scroll-reveal">
+  <section id="about" class="about-section">
     <div class="site-container">
       <div class="about-grid">
         <div class="about-visual soft-card">
@@ -627,7 +627,7 @@ app.get("/", (req, res) => {
   </section>
 
   <!-- Products Section -->
-  <section id="products" class="products-section scroll-reveal">
+  <section id="products" class="products-section">
     <div class="site-container">
       <div class="section-header text-center">
         <span class="section-eyebrow" data-i18n="productsEyebrow">${en.productsEyebrow}</span>
@@ -651,7 +651,7 @@ app.get("/", (req, res) => {
   </section>
 
   <!-- Why Nikhar Skincare Section -->
-  <section id="why" class="why-section scroll-reveal">
+  <section id="why" class="why-section">
     <div class="site-container">
       <div class="section-header text-center">
         <span class="section-eyebrow" data-i18n="whyEyebrow">${en.whyEyebrow}</span>
@@ -695,7 +695,7 @@ app.get("/", (req, res) => {
   </section>
 
   <!-- How Booking Works Steps Section -->
-  <section class="steps-section scroll-reveal">
+  <section class="steps-section">
     <div class="site-container">
       <div class="section-header text-center">
         <span class="section-eyebrow" data-i18n="stepsEyebrow">${en.stepsEyebrow}</span>
@@ -725,7 +725,7 @@ app.get("/", (req, res) => {
   </section>
 
   <!-- Online Booking Section -->
-  <section id="booking" class="booking-section scroll-reveal">
+  <section id="booking" class="booking-section">
     <div class="site-container">
       <div class="booking-wrapper soft-card">
         <div class="booking-header text-center">
@@ -868,7 +868,7 @@ app.get("/", (req, res) => {
   </section>
 
   <!-- Location & Embedded Google Map Section -->
-  <section id="location" class="location-section scroll-reveal">
+  <section id="location" class="location-section">
     <div class="site-container">
       <div class="section-header text-center">
         <span class="section-eyebrow" data-i18n="locationEyebrow">${en.locationEyebrow}</span>
@@ -940,7 +940,7 @@ app.get("/", (req, res) => {
   </section>
 
   <!-- Quick Contact Section -->
-  <section id="contact" class="contact-section scroll-reveal">
+  <section id="contact" class="contact-section">
     <div class="site-container">
       <div class="section-header text-center">
         <span class="section-eyebrow" data-i18n="contactEyebrow">${en.contactEyebrow}</span>

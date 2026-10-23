@@ -311,8 +311,8 @@
     }).catch(() => {});
   }
 
-  // Set Language Function with Cross-Fade Transition
-  function setLanguage(lang) {
+  // Set Language Function with Safe Cross-Fade Transition
+  function setLanguage(lang, isUserSwitch = false) {
     if (lang !== "en" && lang !== "hi") return;
     currentLang = lang;
 
@@ -337,111 +337,119 @@
 
     const dict = I18N[lang] || I18N.en;
 
-    // Apply fading class to smoothly cross-fade text
-    const translatables = document.querySelectorAll("[data-i18n], [data-i18n-ph], [data-i18n-name-en], [data-i18n-title-en]");
-    translatables.forEach((el) => el.classList.add("i18n-fading"));
-
-    setTimeout(() => {
-      // 1. Simple data-i18n innerText
-      document.querySelectorAll("[data-i18n]").forEach((el) => {
-        const key = el.getAttribute("data-i18n");
-        if (dict[key]) {
-          el.textContent = dict[key];
-        }
-      });
-
-      // 2. Placeholder attributes
-      document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
-        const key = el.getAttribute("data-i18n-ph");
-        if (dict[key]) {
-          el.setAttribute("placeholder", dict[key]);
-        }
-      });
-
-      // 3. Document Title & Meta
-      if (dict.metaTitle) document.title = dict.metaTitle;
-      const descMeta = document.querySelector('meta[name="description"]');
-      if (descMeta && dict.metaDesc) descMeta.setAttribute("content", dict.metaDesc);
-
-      // 4. Products: Name, Desc, Badge
-      document.querySelectorAll(".product-card").forEach((card) => {
-        const nameEl = card.querySelector(".product-name");
-        const descEl = card.querySelector(".product-desc");
-        const badgeEl = card.querySelector(".product-badge");
-        const enquireBtn = card.querySelector(".btn-wa-enquire");
-
-        if (nameEl) {
-          nameEl.textContent = lang === "hi"
-            ? nameEl.getAttribute("data-i18n-name-hi") || nameEl.getAttribute("data-i18n-name-en")
-            : nameEl.getAttribute("data-i18n-name-en");
-        }
-
-        if (descEl) {
-          descEl.textContent = lang === "hi"
-            ? descEl.getAttribute("data-i18n-desc-hi") || descEl.getAttribute("data-i18n-desc-en")
-            : descEl.getAttribute("data-i18n-desc-en");
-        }
-
-        if (badgeEl) {
-          badgeEl.textContent = lang === "hi"
-            ? badgeEl.getAttribute("data-i18n-badge-hi") || badgeEl.getAttribute("data-i18n-badge-en")
-            : badgeEl.getAttribute("data-i18n-badge-en");
-        }
-
-        if (enquireBtn) {
-          const prodName = lang === "hi"
-            ? enquireBtn.getAttribute("data-product-name-hi") || enquireBtn.getAttribute("data-product-name-en")
-            : enquireBtn.getAttribute("data-product-name-en");
-          const msg = dict.waPrefillProduct + prodName;
-          enquireBtn.onclick = () => {
-            trackEvent("whatsapp", "product_" + enquireBtn.getAttribute("data-product-id"));
-            window.open(`${WA_BASE}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
-          };
-        }
-      });
-
-      // 5. Trust Badges
-      document.querySelectorAll(".trust-badge-card").forEach((card) => {
-        const titleEl = card.querySelector("[data-i18n-title-en]");
-        const subEl = card.querySelector("[data-i18n-sub-en]");
-        if (titleEl) {
-          titleEl.textContent = lang === "hi"
-            ? titleEl.getAttribute("data-i18n-title-hi")
-            : titleEl.getAttribute("data-i18n-title-en");
-        }
-        if (subEl) {
-          subEl.textContent = lang === "hi"
-            ? subEl.getAttribute("data-i18n-sub-hi")
-            : subEl.getAttribute("data-i18n-sub-en");
-        }
-      });
-
-      // 6. Service Options in select
-      const serviceSelect = document.getElementById("bookService");
-      if (serviceSelect) {
-        Array.from(serviceSelect.options).forEach((opt) => {
-          if (opt.value === "") {
-            opt.textContent = dict.formServiceDefault;
-          } else {
-            opt.textContent = lang === "hi"
-              ? opt.getAttribute("data-name-hi") || opt.getAttribute("data-name-en")
-              : opt.getAttribute("data-name-en");
+    const applyTranslations = () => {
+      try {
+        // 1. Simple data-i18n innerText
+        document.querySelectorAll("[data-i18n]").forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (dict[key]) {
+            el.textContent = dict[key];
           }
         });
+
+        // 2. Placeholder attributes
+        document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+          const key = el.getAttribute("data-i18n-ph");
+          if (dict[key]) {
+            el.setAttribute("placeholder", dict[key]);
+          }
+        });
+
+        // 3. Document Title & Meta
+        if (dict.metaTitle) document.title = dict.metaTitle;
+        const descMeta = document.querySelector('meta[name="description"]');
+        if (descMeta && dict.metaDesc) descMeta.setAttribute("content", dict.metaDesc);
+
+        // 4. Products: Name, Desc, Badge
+        document.querySelectorAll(".product-card").forEach((card) => {
+          const nameEl = card.querySelector(".product-name");
+          const descEl = card.querySelector(".product-desc");
+          const badgeEl = card.querySelector(".product-badge");
+          const enquireBtn = card.querySelector(".btn-wa-enquire");
+
+          if (nameEl) {
+            nameEl.textContent = lang === "hi"
+              ? nameEl.getAttribute("data-i18n-name-hi") || nameEl.getAttribute("data-i18n-name-en")
+              : nameEl.getAttribute("data-i18n-name-en");
+          }
+
+          if (descEl) {
+            descEl.textContent = lang === "hi"
+              ? descEl.getAttribute("data-i18n-desc-hi") || descEl.getAttribute("data-i18n-desc-en")
+              : descEl.getAttribute("data-i18n-desc-en");
+          }
+
+          if (badgeEl) {
+            badgeEl.textContent = lang === "hi"
+              ? badgeEl.getAttribute("data-i18n-badge-hi") || badgeEl.getAttribute("data-i18n-badge-en")
+              : badgeEl.getAttribute("data-i18n-badge-en");
+          }
+
+          if (enquireBtn) {
+            const prodName = lang === "hi"
+              ? enquireBtn.getAttribute("data-product-name-hi") || enquireBtn.getAttribute("data-product-name-en")
+              : enquireBtn.getAttribute("data-product-name-en");
+            const msg = dict.waPrefillProduct + (prodName || "");
+            enquireBtn.onclick = () => {
+              trackEvent("whatsapp", "product_" + (enquireBtn.getAttribute("data-product-id") || "item"));
+              window.open(`${WA_BASE}?text=${encodeURIComponent(msg)}`, "_blank", "noopener,noreferrer");
+            };
+          }
+        });
+
+        // 5. Trust Badges
+        document.querySelectorAll(".trust-badge-card").forEach((card) => {
+          const titleEl = card.querySelector("[data-i18n-title-en]");
+          const subEl = card.querySelector("[data-i18n-sub-en]");
+          if (titleEl) {
+            titleEl.textContent = lang === "hi"
+              ? titleEl.getAttribute("data-i18n-title-hi")
+              : titleEl.getAttribute("data-i18n-title-en");
+          }
+          if (subEl) {
+            subEl.textContent = lang === "hi"
+              ? subEl.getAttribute("data-i18n-sub-hi")
+              : subEl.getAttribute("data-i18n-sub-en");
+          }
+        });
+
+        // 6. Service Options in select
+        const serviceSelect = document.getElementById("bookService");
+        if (serviceSelect) {
+          Array.from(serviceSelect.options).forEach((opt) => {
+            if (opt.value === "") {
+              opt.textContent = dict.formServiceDefault;
+            } else {
+              opt.textContent = lang === "hi"
+                ? opt.getAttribute("data-name-hi") || opt.getAttribute("data-name-en")
+                : opt.getAttribute("data-name-en");
+            }
+          });
+        }
+
+        // 7. General WhatsApp Links
+        const generalWaMsg = encodeURIComponent(dict.waPrefillGeneral);
+        const heroWaBtn = document.getElementById("heroWaBtn");
+        if (heroWaBtn) heroWaBtn.href = `${WA_BASE}?text=${generalWaMsg}`;
+        const floatingWaBtn = document.getElementById("floatingWaBtn");
+        if (floatingWaBtn) floatingWaBtn.href = `${WA_BASE}?text=${generalWaMsg}`;
+        const mobileBarWaBtn = document.getElementById("mobileBarWaBtn");
+        if (mobileBarWaBtn) mobileBarWaBtn.href = `${WA_BASE}?text=${generalWaMsg}`;
+      } catch (err) {
+        console.warn("Translation update warning:", err);
       }
+    };
 
-      // 7. General WhatsApp Links
-      const generalWaMsg = encodeURIComponent(dict.waPrefillGeneral);
-      const heroWaBtn = document.getElementById("heroWaBtn");
-      if (heroWaBtn) heroWaBtn.href = `${WA_BASE}?text=${generalWaMsg}`;
-      const floatingWaBtn = document.getElementById("floatingWaBtn");
-      if (floatingWaBtn) floatingWaBtn.href = `${WA_BASE}?text=${generalWaMsg}`;
-      const mobileBarWaBtn = document.getElementById("mobileBarWaBtn");
-      if (mobileBarWaBtn) mobileBarWaBtn.href = `${WA_BASE}?text=${generalWaMsg}`;
-
-      // Remove fading class to finish cross-fade
-      translatables.forEach((el) => el.classList.remove("i18n-fading"));
-    }, 150);
+    if (isUserSwitch) {
+      const translatables = document.querySelectorAll("[data-i18n], [data-i18n-ph], [data-i18n-name-en], [data-i18n-title-en]");
+      translatables.forEach((el) => el.classList.add("i18n-fading"));
+      setTimeout(() => {
+        applyTranslations();
+        translatables.forEach((el) => el.classList.remove("i18n-fading"));
+      }, 100);
+    } else {
+      applyTranslations();
+    }
   }
 
   // Set date constraints (Today to 60 days in Asia/Kolkata timezone)
@@ -725,7 +733,7 @@
     });
   }
 
-  // Scroll Reveal Animations
+  // Scroll Reveal Animations - Never hide content with opacity 0
   function initScrollReveal() {
     if ("IntersectionObserver" in window) {
       const observer = new IntersectionObserver(
@@ -737,20 +745,17 @@
             }
           });
         },
-        { threshold: 0.15 }
+        { threshold: 0.05, rootMargin: "0px 0px 50px 0px" }
       );
 
       document.querySelectorAll(".scroll-reveal").forEach((el) => {
-        el.style.opacity = "0";
-        el.style.transform = "translateY(24px)";
-        el.style.transition = "opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)";
+        el.classList.add("reveal-ready");
         observer.observe(el);
       });
-
-      // Hook up revealed class styling dynamically
-      const style = document.createElement("style");
-      style.textContent = ".scroll-reveal.revealed { opacity: 1 !important; transform: translateY(0) !important; }";
-      document.head.appendChild(style);
+    } else {
+      document.querySelectorAll(".scroll-reveal").forEach((el) => {
+        el.classList.add("revealed");
+      });
     }
   }
 
@@ -806,10 +811,10 @@
     // Language switcher button listeners
     const btnEn = document.getElementById("langBtnEn");
     const btnHi = document.getElementById("langBtnHi");
-    if (btnEn) btnEn.addEventListener("click", () => setLanguage("en"));
-    if (btnHi) btnHi.addEventListener("click", () => setLanguage("hi"));
+    if (btnEn) btnEn.addEventListener("click", () => setLanguage("en", true));
+    if (btnHi) btnHi.addEventListener("click", () => setLanguage("hi", true));
 
-    // Apply initial saved or default language
-    setLanguage(currentLang);
+    // Apply initial saved or default language without fading animation
+    setLanguage(currentLang, false);
   });
 })();

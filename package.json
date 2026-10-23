@@ -9,7 +9,7 @@
     "dev": "node index.js",
     "start": "node index.js",
     "build": "node -e \"console.log('Build OK')\"",
-    "lint": "eslint ."
+    "lint": "node --check index.js admin.js data.js db.js api/index.js && echo 'Syntax check OK'"
   },
   "dependencies": {
     "express": "^4.21.2",

@@ -951,34 +951,34 @@ app.get("/", (req, res) => {
       <div class="contact-grid">
         <!-- Call -->
         <div class="contact-card soft-card">
-          <div class="contact-icon bg-sage">${renderSvgIcon("phone", 26)}</div>
+          <div class="contact-icon bg-sage">${renderSvgIcon("phone", 22)}</div>
           <h3 data-i18n="quickCallTitle">${en.quickCallTitle}</h3>
           <p>+91 9033442501</p>
-          <a href="${CLIENT.phoneTel}" class="btn btn-secondary w-full" data-track="call" data-i18n="quickCallBtn">${en.quickCallBtn}</a>
+          <a href="${CLIENT.phoneTel}" class="btn btn-secondary contact-card-btn" data-track="call" data-i18n="quickCallBtn">${en.quickCallBtn}</a>
         </div>
 
         <!-- WhatsApp -->
         <div class="contact-card soft-card">
-          <div class="contact-icon bg-gold">${renderSvgIcon("whatsapp", 26)}</div>
+          <div class="contact-icon bg-gold">${renderSvgIcon("whatsapp", 22)}</div>
           <h3 data-i18n="quickWaTitle">${en.quickWaTitle}</h3>
           <p>Direct message to Hunaina</p>
-          <a href="${CLIENT.whatsappBase}?text=${encodeURIComponent(en.waPrefillGeneral)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary w-full" data-track="whatsapp" data-i18n="quickWaBtn">${en.quickWaBtn}</a>
+          <a href="${CLIENT.whatsappBase}?text=${encodeURIComponent(en.waPrefillGeneral)}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary contact-card-btn" data-track="whatsapp" data-i18n="quickWaBtn">${en.quickWaBtn}</a>
         </div>
 
         <!-- Instagram -->
         <div class="contact-card soft-card">
-          <div class="contact-icon bg-rose">${renderSvgIcon("instagram", 26)}</div>
+          <div class="contact-icon bg-rose">${renderSvgIcon("instagram", 22)}</div>
           <h3 data-i18n="quickIgTitle">${en.quickIgTitle}</h3>
           <p>${CLIENT.instagramHandle}</p>
-          <a href="${CLIENT.instagramUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary w-full" data-track="instagram" data-i18n="quickIgBtn">${en.quickIgBtn}</a>
+          <a href="${CLIENT.instagramUrl}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary contact-card-btn" data-track="instagram" data-i18n="quickIgBtn">${en.quickIgBtn}</a>
         </div>
 
         <!-- Email -->
         <div class="contact-card soft-card">
-          <div class="contact-icon bg-lavender">${renderSvgIcon("mail", 26)}</div>
+          <div class="contact-icon bg-lavender">${renderSvgIcon("mail", 22)}</div>
           <h3 data-i18n="quickEmailTitle">${en.quickEmailTitle}</h3>
-          <p>${CLIENT.email}</p>
-          <a href="${CLIENT.emailMailto}" class="btn btn-secondary w-full" data-i18n="quickEmailBtn">${en.quickEmailBtn}</a>
+          <p class="contact-card-email">${CLIENT.email}</p>
+          <a href="${CLIENT.emailMailto}" class="btn btn-secondary contact-card-btn" data-i18n="quickEmailBtn">${en.quickEmailBtn}</a>
         </div>
       </div>
     </div>

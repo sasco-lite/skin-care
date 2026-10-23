@@ -84,7 +84,8 @@ function sanitizeIndianPhone(raw) {
 // GET /api/health - Never throws
 app.get("/api/health", asyncHandler(async (req, res) => {
   try {
-    const isConn = isDbConnected();
+    const db = await connectDB();
+    const isConn = Boolean(db && isDbConnected());
     const adminConfigured = Boolean(process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD);
     return res.json({
       ok: true,

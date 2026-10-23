@@ -1,0 +1,6 @@
+{
+  "name": "Nikhar Skincare",
+  "description": "Safe herbal skincare, body care, and hair care products by Hunaina Shethwala with online booking system and admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

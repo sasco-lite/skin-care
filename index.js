@@ -1,4 +1,4 @@
-// Nikhar Skincare - Main Express Server & Single-Page Application
+// Nikhar Skincare - Main Express Server & Single-Page Application 
 // Bulletproof, CommonJS, bilingual (EN/HI), online booking, and contact tracking
 
 const express = require("express");

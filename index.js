@@ -5,8 +5,132 @@ const express = require("express");
 const path = require("path");
 const crypto = require("crypto");
 const adminRouter = require("./admin");
-const { connectDB, isDbConnected, getDbStatus, Booking, Event } = require("./db");
+const { connectDB, isDbConnected, getDbStatus, Booking, Event, Product, Meta } = require("./db");
 const { CLIENT, PRODUCTS, SERVICES, TIME_SLOTS, SLOT_CAPACITY, TRUST_BADGES, TRANSLATIONS } = require("./data");
+
+// Central Application Config & Seed Products
+const CONFIG = {
+  seedProducts: [
+    {
+      name: "Nikhar Skincare Gold Advance Bridal Avocado Night Cream, 50gm, Skin Whitening Formula, Jar",
+      slug: "nikhar-skincare-gold-advance-bridal-avocado-night-cream",
+      sku: "NK-AVO-01",
+      category: "skin",
+      mrp: 650,
+      salePrice: 650,
+      stockStatus: "in_stock",
+      stock: 25,
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
+          alt: "Nikhar Skincare Gold Advance Bridal Avocado Night Cream",
+          isPrimary: true
+        }
+      ],
+      description: "The Nikhar Skincare Gold Advance Bridal Avocado Night Cream is a premium herbal formulation designed for intensive overnight skin repair and whitening. Enriched with high quality Avocado extracts this cream works while you sleep to provide deep nourishment and hydration to tired dull skin. It is specifically engineered for bridal skincare routines ensuring a fresh glowing and spotless appearance by morning. The formula is 100% organic paraben free and cruelty free making it suitable for all skin types including sensitive skin. Regular application helps in reducing dark spots and evening out skin tone with visible results typically observed within 7 days of consistent use. This 50gm jar is a staple for B2B beauty distributors looking for high performance herbal skincare solutions.",
+      specs: [
+        { key: "Brand", value: "Nikhar Skincare" },
+        { key: "Weight", value: "50gm" },
+        { key: "Type", value: "Night Cream" },
+        { key: "Packaging Type", value: "Gold-toned Jar" },
+        { key: "Formulation", value: "Cream" },
+        { key: "Skin Type", value: "All Skin Types" },
+        { key: "Color", value: "Gold" },
+        { key: "Benefits", value: "Deep nourishment, Repairs dull skin, Supports healthy-looking skin, Moisturizes deeply" },
+        { key: "Model", value: "Gold Advance Bridal Avocado" },
+        { key: "Features", value: "Paraben Free, Cruelty Free, 100% Organic Ingredients, Herbal & Safe" },
+        { key: "Flavor", value: "Avocado" },
+        { key: "Application Time", value: "Night" },
+        { key: "Primary Ingredient", value: "Avocado Extract" },
+        { key: "Results Timeline", value: "Visible results in 7 days" }
+      ],
+      isVisible: true,
+      isFeatured: true,
+      badgeEn: "Bridal Signature",
+      badgeHi: "ब्राइडल स्पेशल",
+      metaTitle: "Gold Advance Bridal Avocado Night Cream • Nikhar Skincare",
+      metaDescription: "100% organic bridal avocado night cream for overnight whitening, repair and spotless glow."
+    },
+    {
+      name: "Skin Whitening Kesar Cream, 50gm",
+      slug: "skin-whitening-kesar-cream",
+      sku: "NK-KSR-02",
+      category: "skin",
+      mrp: 550,
+      salePrice: 499,
+      stockStatus: "in_stock",
+      stock: 35,
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80",
+          alt: "Skin Whitening Kesar Cream",
+          isPrimary: true
+        }
+      ],
+      description: "Pure Kashmiri saffron infused daylight and evening herbal cream designed to restore natural glow, even out skin tone, and reduce pigmentation safely. 100% chemical-free and steroid-free.",
+      specs: [
+        { key: "Brand", value: "Nikhar Skincare" },
+        { key: "Weight", value: "50gm" },
+        { key: "Primary Ingredient", value: "Kashmiri Kesar (Saffron)" },
+        { key: "Skin Type", value: "All Skin Types" }
+      ],
+      isVisible: true,
+      isFeatured: true,
+      badgeEn: "Customer Favorite",
+      badgeHi: "पसंदीदा उत्पाद",
+      metaTitle: "Skin Whitening Kesar Cream • Nikhar Skincare",
+      metaDescription: "Pure Kashmiri saffron cream for natural glow and even tone without steroids."
+    },
+    {
+      name: "Handcrafted Herbal Soaps Collection (Pack of 3)",
+      slug: "handcrafted-herbal-soaps-collection",
+      sku: "NK-SOP-03",
+      category: "body",
+      mrp: 350,
+      salePrice: 299,
+      stockStatus: "in_stock",
+      stock: 40,
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1607006314644-8d488bb25492?auto=format&fit=crop&w=800&q=80",
+          alt: "Handcrafted Herbal Soaps",
+          isPrimary: true
+        }
+      ],
+      description: "Cold-processed artisanal handmade soaps in therapeutic aromas including saffron, sandalwood, and lavender. Nourishes skin and maintains moisture barrier.",
+      specs: [
+        { key: "Brand", value: "Nikhar Skincare" },
+        { key: "Weight", value: "3 x 100gm" },
+        { key: "Formulation", value: "Cold Process Bar" },
+        { key: "Features", value: "Paraben & Sulfate Free, 100% Herbal" }
+      ],
+      isVisible: true,
+      isFeatured: true,
+      badgeEn: "Artisanal",
+      badgeHi: "हस्तनिर्मित",
+      metaTitle: "Handmade Herbal Soaps • Nikhar Skincare",
+      metaDescription: "Artisanal cold-processed soaps made with pure botanical oils and extracts."
+    }
+  ]
+};
+
+// Seeding helper: seed once via meta flag "products_seeded". Deleting products never re-seeds.
+async function checkAndSeedProducts() {
+  try {
+    const db = await connectDB();
+    if (!db || !isDbConnected()) return;
+    const seededMeta = await Meta.findOne({ key: "products_seeded" });
+    if (seededMeta) return;
+    const count = await Product.countDocuments();
+    if (count === 0) {
+      await Product.insertMany(CONFIG.seedProducts);
+    }
+    await Meta.create({ key: "products_seeded", value: true });
+  } catch (err) {
+    console.warn("Products seeding check error:", err.message);
+  }
+}
+
 
 const app = express();
 
@@ -328,8 +452,35 @@ function renderSvgIcon(name, size = 20, className = "") {
   }
 }
 
-app.get("/", (req, res) => {
+app.get("/", asyncHandler(async (req, res) => {
   const en = TRANSLATIONS.en;
+
+  // Run initial seed if needed
+  await checkAndSeedProducts();
+
+  let publicProducts = [];
+  let hideProductsSection = false;
+
+  const db = await connectDB();
+  const dbOnline = Boolean(db && isDbConnected());
+
+  if (dbOnline) {
+    const totalInDb = await Product.countDocuments();
+    if (totalInDb === 0) {
+      hideProductsSection = true;
+      publicProducts = [];
+    } else {
+      publicProducts = await Product.find({
+        $or: [{ isVisible: true }, { visible: true }]
+      }).sort({ createdAt: -1 }).lean();
+      if (publicProducts.length === 0) {
+        hideProductsSection = true;
+      }
+    }
+  } else {
+    hideProductsSection = false;
+    publicProducts = CONFIG.seedProducts.filter((p) => p.isVisible);
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -364,28 +515,40 @@ app.get("/", (req, res) => {
     ]
   };
 
-  const productCardsHtml = PRODUCTS.map((p) => {
+  const productCardsHtml = publicProducts.map((p) => {
+    const primaryImg = (p.images && p.images.find((i) => i.isPrimary)) || (p.images && p.images[0]);
+    const imgUrl = primaryImg ? primaryImg.url : "";
+    const imgAlt = (primaryImg && primaryImg.alt) ? primaryImg.alt : (p.nameEn || p.name);
+    const prodName = p.name || p.nameEn || "";
+    const prodDesc = p.description || p.descEn || "";
+    const accent = p.category === "hair" ? "sage" : p.category === "body" ? "lavender" : "gold";
+    const badgeText = p.badgeEn || (p.isFeatured ? "Featured" : "");
+    const priceDisplay = p.salePrice && p.mrp && p.salePrice < p.mrp
+      ? `<span class="sale-price">₹${p.salePrice}</span> <span class="mrp-struck">₹${p.mrp}</span>`
+      : p.salePrice
+      ? `<span class="sale-price">₹${p.salePrice}</span>`
+      : `<span class="price-notice" data-i18n="cardAskPrice">${en.cardAskPrice}</span>`;
+
     return `
-      <article class="product-card soft-card" data-category="${p.category}" data-accent="${p.accent}">
+      <article class="product-card soft-card" data-category="${p.category || "skin"}" data-accent="${accent}">
         <div class="product-card-top">
-          <span class="product-badge badge-${p.accent}" data-i18n-badge-en="${p.badgeEn}" data-i18n-badge-hi="${p.badgeHi}">
-            ${p.badgeEn}
-          </span>
-          <span class="product-category-tag">${p.category.toUpperCase()} CARE</span>
+          ${badgeText ? `<span class="product-badge badge-${accent}">${badgeText}</span>` : `<span></span>`}
+          <span class="product-category-tag">${(p.category || "skin").toUpperCase()} CARE</span>
         </div>
-        <div class="product-card-art art-${p.accent}">
-          <div class="art-blob"></div>
-          <div class="art-icon">
-            ${renderSvgIcon(p.category === "hair" ? "sparkles" : p.category === "body" ? "heart-pulse" : "leaf", 38)}
-          </div>
+        <div class="product-card-art ${imgUrl ? "has-img" : `art-${accent}`}">
+          ${imgUrl
+            ? `<img src="${imgUrl}" alt="${imgAlt}" class="product-real-img" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+               <div class="art-icon fallback-icon" style="display:none;">${renderSvgIcon(p.category === "hair" ? "sparkles" : p.category === "body" ? "heart-pulse" : "leaf", 38)}</div>`
+            : `<div class="art-blob"></div><div class="art-icon">${renderSvgIcon(p.category === "hair" ? "sparkles" : p.category === "body" ? "heart-pulse" : "leaf", 38)}</div>`
+          }
         </div>
         <div class="product-card-body">
-          <h3 class="product-name" data-i18n-name-en="${p.nameEn}" data-i18n-name-hi="${p.nameHi}">${p.nameEn}</h3>
-          <p class="product-desc" data-i18n-desc-en="${p.descEn}" data-i18n-desc-hi="${p.descHi}">${p.descEn}</p>
+          <h3 class="product-name" data-i18n-name-en="${prodName}">${prodName}</h3>
+          <p class="product-desc" data-i18n-desc-en="${prodDesc}">${prodDesc}</p>
         </div>
         <div class="product-card-footer">
-          <div class="price-notice" data-i18n="cardAskPrice">${en.cardAskPrice}</div>
-          <button class="btn btn-wa-enquire" data-product-id="${p.id}" data-product-name-en="${p.nameEn}" data-product-name-hi="${p.nameHi}">
+          <div class="price-notice">${priceDisplay}</div>
+          <button class="btn btn-wa-enquire" data-product-id="${p.slug || p._id || p.id}" data-product-name-en="${prodName}">
             ${renderSvgIcon("whatsapp", 16)}
             <span class="btn-text" data-i18n="cardEnquireBtn">${en.cardEnquireBtn}</span>
           </button>
@@ -466,7 +629,7 @@ app.get("/", (req, res) => {
       <!-- Desktop Nav Links -->
       <div class="nav-links">
         <a href="#about" class="nav-link" data-i18n="navAbout">${en.navAbout}</a>
-        <a href="#products" class="nav-link" data-i18n="navProducts">${en.navProducts}</a>
+        ${hideProductsSection ? "" : `<a href="#products" class="nav-link" data-i18n="navProducts">${en.navProducts}</a>`}
         <a href="#why" class="nav-link" data-i18n="navWhy">${en.navWhy}</a>
         <a href="#location" class="nav-link" data-i18n="navLocation">${en.navLocation}</a>
         <a href="#contact" class="nav-link" data-i18n="navContact">${en.navContact}</a>
@@ -626,6 +789,7 @@ app.get("/", (req, res) => {
     </div>
   </section>
 
+  ${hideProductsSection ? "" : `
   <!-- Products Section -->
   <section id="products" class="products-section">
     <div class="site-container">
@@ -648,7 +812,7 @@ app.get("/", (req, res) => {
         ${productCardsHtml}
       </div>
     </div>
-  </section>
+  </section>`}
 
   <!-- Why Nikhar Skincare Section -->
   <section id="why" class="why-section">
@@ -1011,7 +1175,7 @@ app.get("/", (req, res) => {
           <h4 data-i18n="footerQuickLinks">${en.footerQuickLinks}</h4>
           <ul>
             <li><a href="#about" data-i18n="navAbout">${en.navAbout}</a></li>
-            <li><a href="#products" data-i18n="navProducts">${en.navProducts}</a></li>
+            ${hideProductsSection ? "" : `<li><a href="#products" data-i18n="navProducts">${en.navProducts}</a></li>`}
             <li><a href="#why" data-i18n="navWhy">${en.navWhy}</a></li>
             <li><a href="#booking" data-i18n="navBooking">${en.navBooking}</a></li>
             <li><a href="#location" data-i18n="navLocation">${en.navLocation}</a></li>
@@ -1075,7 +1239,7 @@ app.get("/", (req, res) => {
 </html>`;
 
   res.send(html);
-});
+}));
 
 // 404 Handler
 app.use((req, res) => {
@@ -1112,8 +1276,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Export app for Vercel Serverless
+// Export app and CONFIG for Vercel Serverless and admin router
+app.CONFIG = CONFIG;
 module.exports = app;
+module.exports.CONFIG = CONFIG;
 
 // Listen only when run locally
 if (require.main === module) {

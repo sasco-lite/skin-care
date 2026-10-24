@@ -195,13 +195,61 @@ const eventSchema = new mongoose.Schema(
   }
 );
 
+const productSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true, maxlength: 300 },
+    slug: { type: String, required: true, unique: true, trim: true, lowercase: true, index: true },
+    sku: { type: String, trim: true, default: "", maxlength: 100 },
+    category: { type: String, required: true, trim: true, enum: ["skin", "body", "hair", "general"], default: "skin", index: true },
+    mrp: { type: Number, default: 0, min: 0 },
+    salePrice: { type: Number, default: 0, min: 0 },
+    stockStatus: { type: String, enum: ["in_stock", "limited", "out_of_stock"], default: "in_stock", index: true },
+    stock: { type: Number, default: 0, min: 0 },
+    images: [
+      {
+        url: { type: String, required: true, trim: true },
+        alt: { type: String, default: "", trim: true },
+        isPrimary: { type: Boolean, default: false }
+      }
+    ],
+    description: { type: String, default: "", trim: true },
+    shortDescription: { type: String, default: "", trim: true },
+    specs: [
+      {
+        key: { type: String, required: true, trim: true },
+        value: { type: String, required: true, trim: true }
+      }
+    ],
+    isVisible: { type: Boolean, default: true, index: true },
+    isFeatured: { type: Boolean, default: false, index: true },
+    badgeEn: { type: String, default: "", trim: true },
+    badgeHi: { type: String, default: "", trim: true },
+    metaTitle: { type: String, default: "", trim: true },
+    metaDescription: { type: String, default: "", trim: true }
+  },
+  { timestamps: true }
+);
+
+const metaSchema = new mongoose.Schema(
+  {
+    key: { type: String, required: true, unique: true, index: true },
+    value: { type: mongoose.Schema.Types.Mixed, default: true }
+  },
+  { timestamps: true }
+);
+
 const Booking = mongoose.models.Booking || mongoose.model("Booking", bookingSchema);
 const Event = mongoose.models.Event || mongoose.model("Event", eventSchema);
+const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
+const Meta = mongoose.models.Meta || mongoose.model("Meta", metaSchema);
 
 module.exports = {
   connectDB,
   isDbConnected,
   getDbStatus,
   Booking,
-  Event
+  Event,
+  Product,
+  Meta
 };
+

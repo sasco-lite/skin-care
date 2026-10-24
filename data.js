@@ -632,6 +632,124 @@ const TRANSLATIONS = {
   }
 };
 
+const CONFIG = {
+  currency: "₹",
+  seedProducts: [
+    {
+      name: "GOLD Advance Bridal Avocado Night Cream",
+      slug: "gold-advance-bridal-avocado-night-cream",
+      brand: "Nikhar Skincare",
+      category: "Skin Care",
+      tagline: "Pure Herbal Radiance • Overnight Repair",
+      sku: "NK-SKIN-001",
+      badge: "Bridal Signature",
+      mrp: 1499,
+      salePrice: 1199,
+      stockStatus: "in_stock",
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80",
+          alt: "GOLD Advance Bridal Avocado Night Cream",
+          isPrimary: true
+        }
+      ],
+      description: "Our signature bridal night elixir enriched with avocado oil, Kashmiri saffron, and cold-pressed botanical extracts. 100% organic formulation designed to restore deep radiance and even out skin tone overnight.",
+      benefits: [
+        "Restores natural skin barrier and deep overnight nourishment",
+        "Enriched with pure Kashmiri saffron and fresh avocado oil",
+        "Steroid-free, chemical-free safe brightening action"
+      ],
+      howToUse: "Cleanse face thoroughly before bedtime. Take a small pearl-sized amount and gently massage in upward circular motions until absorbed.",
+      tags: ["bridal", "night cream", "skin whitening", "saffron", "organic"],
+      specs: [
+        { key: "Net Weight", value: "50g" },
+        { key: "Skin Type", value: "All Skin Types / Dull Skin" },
+        { key: "Formulation", value: "100% Herbal Rich Cream" },
+        { key: "Shelf Life", value: "12 Months from Mfd" }
+      ],
+      visible: true,
+      featured: true,
+      sortOrder: 1,
+      metaTitle: "GOLD Advance Bridal Avocado Night Cream | Nikhar Skincare",
+      metaDescription: "Handcrafted herbal bridal night cream with pure avocado and Kashmiri saffron. 100% organic, steroid-free, made in Ahmedabad."
+    },
+    {
+      name: "Skin Whitening Kesar Cream",
+      slug: "skin-whitening-kesar-cream",
+      brand: "Nikhar Skincare",
+      category: "Skin Care",
+      tagline: "Day & Night Herbal Complexion Balancer",
+      sku: "NK-SKIN-002",
+      badge: "Customer Favorite",
+      mrp: 999,
+      salePrice: 799,
+      stockStatus: "in_stock",
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1608248597359-5613550e5e34?auto=format&fit=crop&w=800&q=80",
+          alt: "Skin Whitening Kesar Cream",
+          isPrimary: true
+        }
+      ],
+      description: "Infused with pure Kashmiri saffron and licorice root extracts to diminish blemishes, combat sun pigmentation, and restore clean healthy radiance without synthetic bleaches.",
+      benefits: [
+        "Lightweight daytime and evening non-greasy texture",
+        "Fades stubborn blemishes and sun tan gently",
+        "Infused with authentic saffron and sandalwood essence"
+      ],
+      howToUse: "Apply morning and evening after washing face with a mild herbal cleanser. Smooth over face and neck evenly.",
+      tags: ["kesar", "saffron", "blemishes", "day cream", "herbal"],
+      specs: [
+        { key: "Net Weight", value: "50g" },
+        { key: "Key Ingredients", value: "Kashmiri Saffron, Licorice, Sandalwood" },
+        { key: "Texture", value: "Fast-absorbing silky cream" }
+      ],
+      visible: true,
+      featured: true,
+      sortOrder: 2,
+      metaTitle: "Skin Whitening Kesar Cream • Nikhar Skincare",
+      metaDescription: "Pure Kashmiri saffron face cream for spotless glowing skin. Handcrafted in Ahmedabad, Gujarat."
+    },
+    {
+      name: "21 Herbs Hair Regrowth Oil",
+      slug: "21-herbs-hair-regrowth-oil",
+      brand: "Nikhar Skincare",
+      category: "Hair Care",
+      tagline: "Ancient Scalp Therapy & Root Revitalizer",
+      sku: "NK-HAIR-001",
+      badge: "Best Seller",
+      mrp: 899,
+      salePrice: 699,
+      stockStatus: "limited",
+      images: [
+        {
+          url: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=800&q=80",
+          alt: "21 Herbs Hair Regrowth Oil",
+          isPrimary: true
+        }
+      ],
+      description: "Slow-cooked Ayurvedic herbal hair elixir infused with 21 medicinal herbs, onion seeds (kalonji), bhringraj, amla, and virgin cold-pressed coconut oil for follicular revitalization.",
+      benefits: [
+        "Reduces hair fall and stimulates dormant hair follicles",
+        "Soothes itchy scalp and controls stubborn dandruff",
+        "100% natural, chemical-free cold-pressed herbal formula"
+      ],
+      howToUse: "Warm a few drops in palms and massage thoroughly into scalp with fingertips for 10 minutes. Leave overnight or for at least 2 hours before washing with Nikhar herbal shampoo.",
+      tags: ["hair oil", "regrowth", "bhringraj", "kalonji", "anti-hairfall"],
+      specs: [
+        { key: "Volume", value: "100ml" },
+        { key: "Base Oil", value: "Cold Pressed Virgin Coconut & Sesame" },
+        { key: "Herbs Count", value: "21 Certified Herbs" }
+      ],
+      visible: true,
+      featured: true,
+      sortOrder: 3,
+      metaTitle: "21 Herbs Hair Regrowth Oil • Nikhar Skincare",
+      metaDescription: "Slow-cooked Ayurvedic oil with bhringraj and 21 medicinal herbs for fast hair revitalization."
+    }
+  ]
+};
+
 module.exports = {
   CLIENT,
   PRODUCTS,
@@ -639,5 +757,6 @@ module.exports = {
   TIME_SLOTS,
   SLOT_CAPACITY,
   TRUST_BADGES,
-  TRANSLATIONS
+  TRANSLATIONS,
+  CONFIG
 };
